@@ -175,107 +175,11 @@ HTTP/1.1 500 Internal Server Error
 ```
 
 ***
-
-#### - 회원가입  
-  
-##### 설명
-
-클라이언트는 사용자 이름, 닉네임, 성별, 사용자 아이디, 사용자 비밀번호, 사용자 이메일, 주소, 상세주소,  가입경로를 포함하여 요청하고 회원가입이 성공적으로 이루어지면 성공에 해당하는 응답을 받습니다. 만약 존재하는 아이디일 경우 중복된 아이디에 대한 응답을 받습니다. 서버 에러, 데이터베이스 에러가 발생할 수 있습니다.  
-
-- method : **POST**  
-- URL : **/sign-up**  
-
-##### Request
-
-###### Request Body
-
-| name | type | description | required |
-|---|:---:|:---:|:---:|
-| userId | String | 사용자 아이디 (영문과 숫자로만 이루어진 6자 이상 20자 이하 문자열) | O |
-| userNickname | String | 사용자 닉네임 | O |
-| userPassword | String | 사용자 비밀번호 (영문 숫자 조합으로 이루어진 8자 이상 13자 이하 문자열) | O |
-| userEmail| String | 사용자 이메일(특수문자는 '@', '.', '-', '_' 만 사용) | O |
-| name | String | 사용자 이름 (한글로만 이루어진 2자 이상 5자 이하 문자열) | O |
-| gender | String | 사용자 성별 (남, 여) | O |
-| address | String | 사용자 주소 | O |
-| detailAddress | String | 사용자 상세 주소 | X |
-| joinType | String | 가입 경로 (NORMAL: 일반, KAKAO: 카카오, NAVER: 네이버) | O |
-| snsId | String | sns 아이디 | O |
-| profileImage | String | 사용자 프로필 | X |
-| userLevel | String | 사용자 등급 | O |
-
-###### Example
-
-```bash
-curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/sign-up" \
- -d "user_id=qwer1234" \
- -d "user_password=qwer1234" \
- -d "user_email=qwer1234@gmail.com" \
- -d "user_nickname=맛집" \
- -d "gender=남" \
- -d "name=홍길동" \
- -d "address=부산광역시 부산진구 ..." \
- -d "detail_address=402호" \
- -d "join_type=NORMAL"
-```
-
-##### Response
-
-###### Response Body
-
-| name | type | description | required |
-|---|:---:|:---:|:---:|
-| code | String | 응답 결과 코드 | O |
-| message | String | 응답 결과 코드에 대한 설명 | O |
-
-###### Example
-
-**응답 성공**
-```bash
-HTTP/1.1 200 OK
-
-{
-  "code": "SU",
-  "message": "Success."
-}
-```
-
-**응답 : 실패 (데이터 유효성 검사 실패)**
-```bash
-HTTP/1.1 400 Bad Request
-
-{
-  "code": "VF",
-  "message": "Validation Fail."
-}
-```
-
-**응답 : 실패 (중복된 아이디 또는 닉네임)**
-```bash
-HTTP/1.1 400 Bad Request
-
-{
-  "code": "EU",
-  "message": "Exist User."
-}
-```
-
-**응답 : 실패 (데이터베이스 에러)**
-```bash
-HTTP/1.1 500 Internal Server Error
-
-{
-  "code": "DBE",
-  "message": "Database Error."
-}
-```
-
-***
 ### 이메일 인증번호(인증코드) 생성 
 
 ```bash
 curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/email" \
- -d "user_email=qwer1234@gmail.com" \
+ -d "userEmail=qwer1234@gmail.com" \
 ```
 
 ##### Response
@@ -329,8 +233,8 @@ HTTP/1.1 500 Internal Server Error
 ### 이메일 인증번호(인증코드) 인가
 ```bash
 curl -v -X GET "http://127.0.0.1:4000/api/v1/auth/email" \
- -d "user_email=qwer1234@gmail.com" \
- -d "code=qwer1234"
+ -d "userEmail=qwer1234@gmail.com" \
+ -d "emailToken=qwer1234"
 ```
 
 ##### Response
@@ -380,7 +284,104 @@ HTTP/1.1 500 Internal Server Error
 }
 ```
 
+***
 
+#### - 회원가입  
+  
+##### 설명
+
+클라이언트는 사용자 이름, 닉네임, 성별, 사용자 아이디, 사용자 비밀번호, 사용자 이메일, 주소, 상세주소,  가입경로를 포함하여 요청하고 회원가입이 성공적으로 이루어지면 성공에 해당하는 응답을 받습니다. 만약 존재하는 아이디일 경우 중복된 아이디에 대한 응답을 받습니다. 서버 에러, 데이터베이스 에러가 발생할 수 있습니다.  
+
+- method : **POST**  
+- URL : **/sign-up**  
+
+##### Request
+
+###### Request Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| userId | String | 사용자 아이디 (영문과 숫자로만 이루어진 6자 이상 20자 이하 문자열) | O |
+| userNickname | String | 사용자 닉네임 | O |
+| userPassword | String | 사용자 비밀번호 (영문 숫자 조합으로 이루어진 8자 이상 13자 이하 문자열) | O |
+| userEmail| String | 사용자 이메일(특수문자는 '@', '.', '-', '_' 만 사용) | O |
+| name | String | 사용자 이름 (한글로만 이루어진 2자 이상 5자 이하 문자열) | O |
+| gender | String | 사용자 성별 (남, 여) | O |
+| address | String | 사용자 주소 | O |
+| detailAddress | String | 사용자 상세 주소 | X |
+| joinType | String | 가입 경로 (NORMAL: 일반, KAKAO: 카카오, NAVER: 네이버) | O |
+| snsId | String | sns 아이디 | X |
+| profileImage | String | 사용자 프로필 | X |
+| userLevel | String | 사용자 등급 | O |
+| emailToken | String | Bearer 인증 방식에 사용될 JWT (email) | O |
+
+###### Example
+
+```bash
+curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/sign-up" \
+ -d "userId=qwer1234" \
+ -d "userPassword=qwer1234" \
+ -d "userEmail=qwer1234@gmail.com" \
+ -d "emailToken=qwer1234""\
+ -d "userNickname=맛집" \
+ -d "gender=남" \
+ -d "name=홍길동" \
+ -d "address=부산광역시 부산진구 ..." \
+ -d "detailAddress=402호" \
+ -d "userLevel=0레벨" \
+ -d "joinType=NORMAL"
+```
+
+##### Response
+
+###### Response Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| code | String | 응답 결과 코드 | O |
+| message | String | 응답 결과 코드에 대한 설명 | O |
+
+###### Example
+
+**응답 성공**
+```bash
+HTTP/1.1 200 OK
+
+{
+  "code": "SU",
+  "message": "Success."
+}
+```
+
+**응답 : 실패 (데이터 유효성 검사 실패)**
+```bash
+HTTP/1.1 400 Bad Request
+
+{
+  "code": "VF",
+  "message": "Validation Fail."
+}
+```
+
+**응답 : 실패 (중복된 아이디 또는 닉네임)**
+```bash
+HTTP/1.1 400 Bad Request
+
+{
+  "code": "EU",
+  "message": "Exist User."
+}
+```
+
+**응답 : 실패 (데이터베이스 에러)**
+```bash
+HTTP/1.1 500 Internal Server Error
+
+{
+  "code": "DBE",
+  "message": "Database Error."
+}
+```
 
 ***
 #### - SNS 회원가입 및 로그인  

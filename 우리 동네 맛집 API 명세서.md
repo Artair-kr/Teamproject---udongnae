@@ -174,8 +174,171 @@ HTTP/1.1 500 Internal Server Error
 }
 ```
 
+#### - 닉네임 중복 확인  
+  
+##### 설명
+
+클라이언트는 사용할 닉네임 포함하여 요청하고 중복되지 않는 닉네임이라면 성공 응답을 받습니다. 만약 사용중인 닉네임이라면 닉네임 중복에 해당하는 응답을 받습니다. 서버 에러, 데이터베이스 에러가 발생할 수 있습니다.  
+
+- method : **POST**  
+- URL : **/nickName-check**  
+
+##### Request
+
+###### Request Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| userNickname | String | 중복확인을 수행할 사용자 닉네임 | O |
+
+###### Example
+
+```bash
+curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/nickName-check" \
+ -d "userNickname=맛집"
+```
+
+##### Response
+
+###### Response Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| code | String | 응답 결과 코드 | O |
+| message | String | 응답 결과 코드에 대한 설명 | O |
+
+###### Example
+
+**응답 성공**
+```bash
+HTTP/1.1 200 OK
+
+{
+  "code": "SU",
+  "message": "Success."
+}
+```
+
+**응답 : 실패 (데이터 유효성 검사 실패)**
+```bash
+HTTP/1.1 400 Bad Request
+
+{
+  "code": "VF",
+  "message": "Validation Fail."
+}
+```
+
+**응답 : 실패 (중복된 닉네임)**
+```bash
+HTTP/1.1 400 Bad Request
+
+{
+  "code": "EU",
+  "message": "Exist User."
+}
+```
+
+**응답 : 실패 (데이터베이스 에러)**
+```bash
+HTTP/1.1 500 Internal Server Error
+
+{
+  "code": "DBE",
+  "message": "Database Error."
+}
+```
+
+#### - 이메일 중복 확인  
+  
+##### 설명
+
+클라이언트는 사용할 이메일을 포함하여 요청하고 중복되지 않는 이메일이라면 성공 응답을 받습니다. 만약 사용중인 이메일이라면 이메일 중복에 해당하는 응답을 받습니다. 서버 에러, 데이터베이스 에러가 발생할 수 있습니다.  
+
+- method : **POST**  
+- URL : **/email-check**  
+
+##### Request
+
+###### Request Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| userEmail | String | 중복확인을 수행할 사용자 이메일 | O |
+
+###### Example
+
+```bash
+curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/email-check" \
+ -d "userEmail=qwer1234@gmail.com"
+```
+
+##### Response
+
+###### Response Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| code | String | 응답 결과 코드 | O |
+| message | String | 응답 결과 코드에 대한 설명 | O |
+
+###### Example
+
+**응답 성공**
+```bash
+HTTP/1.1 200 OK
+
+{
+  "code": "SU",
+  "message": "Success."
+}
+```
+
+**응답 : 실패 (데이터 유효성 검사 실패)**
+```bash
+HTTP/1.1 400 Bad Request
+
+{
+  "code": "VF",
+  "message": "Validation Fail."
+}
+```
+
+**응답 : 실패 (중복된 아이디)**
+```bash
+HTTP/1.1 400 Bad Request
+
+{
+  "code": "EU",
+  "message": "Exist User."
+}
+```
+
+**응답 : 실패 (데이터베이스 에러)**
+```bash
+HTTP/1.1 500 Internal Server Error
+
+{
+  "code": "DBE",
+  "message": "Database Error."
+}
+```
+
 ***
 ### 이메일 인증번호(인증코드) 생성 
+
+##### Request
+
+###### Request Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| userEmail | String | 사용자의 이메일 | O |
+| emailToken | String | Bearer 인증 방식에 사용될 JWT (email) | O |
+| expirationTime | Integer | accessToken의 만료 기간 (초단위?) | O |
+| expired | Boolean | accessToken의 만료 여부 | O |
+
+###### Example
 
 ```bash
 curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/email" \
@@ -190,10 +353,6 @@ curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/email" \
 |---|:---:|:---:|:---:|
 | code | String | 응답 결과 코드 | O |
 | message | String | 응답 결과 코드에 대한 설명 | O |
-| userEmail | String | 사용자의 이메일 | O |
-| emailToken | String | Bearer 인증 방식에 사용될 JWT (email) | O |
-| expirationTime | Integer | accessToken의 만료 기간 (초단위?) | O |
-| expired | Boolean | accessToken의 만료 여부 | O |
 
 ###### Example
 
@@ -231,6 +390,20 @@ HTTP/1.1 500 Internal Server Error
 ***
 
 ### 이메일 인증번호(인증코드) 인가
+
+##### Request
+
+###### Request Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| userEmail | String | 사용자의 이메일 | O |
+| emailToken | String | Bearer 인증 방식에 사용될 JWT (email) | O |
+| expirationTime | Integer | accessToken의 만료 기간 (초단위?) | O |
+| expired | Boolean | accessToken의 만료 여부 | O |
+
+###### Example
+
 ```bash
 curl -v -X GET "http://127.0.0.1:4000/api/v1/auth/email" \
  -d "userEmail=qwer1234@gmail.com" \
@@ -245,10 +418,6 @@ curl -v -X GET "http://127.0.0.1:4000/api/v1/auth/email" \
 |---|:---:|:---:|:---:|
 | code | String | 응답 결과 코드 | O |
 | message | String | 응답 결과 코드에 대한 설명 | O |
-| userEmail | String | 사용자의 이메일 | O |
-| emailToken | String | Bearer 인증 방식에 사용될 JWT (email) | O |
-| expirationTime | Integer | accessToken의 만료 기간 (초단위?) | O |
-| expired | Boolean | accessToken의 만료 여부 | O |
 
 ###### Example
 

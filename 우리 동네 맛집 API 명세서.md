@@ -39,7 +39,7 @@ Auth 모듈은 인증 없이 요청할 수 있는 모듈입니다.
 ```bash
 curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/sign-in" \
  -d "userId=qwer1234" \
- -d "userPassword=Qwer1234!"
+    "userPassword=Qwer1234!"
 ```
 
 ##### Response
@@ -421,7 +421,7 @@ HTTP/1.1 500 Internal Server Error
 ```bash
 curl -v -X GET "http://127.0.0.1:4000/api/v1/auth/email" \
  -d "userEmail=qwer1234@gmail.com" \
- -d "emailToken=qwer1234"
+    "emailToken=qwer1234"
 ```
 
 ##### Response
@@ -503,16 +503,16 @@ HTTP/1.1 500 Internal Server Error
 ```bash
 curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/sign-up" \
  -d "userId=qwer1234" \
- -d "userPassword=qwer1234" \
- -d "userEmail=qwer1234@gmail.com" \
- -d "emailToken=qwer1234""\
- -d "userNickname=맛집" \
- -d "gender=남" \
- -d "name=홍길동" \
- -d "address=부산광역시 부산진구 ..." \
- -d "detailAddress=402호" \
- -d "userLevel=0레벨" \
- -d "joinType=NORMAL"
+    "userPassword=qwer1234" \
+    "userEmail=qwer1234@gmail.com" \
+    "emailToken=qwer1234""\
+    "userNickname=맛집" \
+    "gender=남" \
+    "name=홍길동" \
+    "address=부산광역시 부산진구 ..." \
+    "detailAddress=402호" \
+    "userLevel=0레벨" \
+    "joinType=NORMAL"
 ```
 
 ##### Response

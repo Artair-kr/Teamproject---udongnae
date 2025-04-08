@@ -598,14 +598,14 @@ curl -v GET http://127.0.0.1:4000/api/v1/auth/sns/kakao
 ```bash
 HTTP/1.1 302 Found
 Set-Cookie: accessToken=${accessToken}; Path=/;
-Location: http://127.0.0.1:3000/main
+Location: http://127.0.0.1:4000/main
 ```
 
 **응답 성공 (회원가입이 안된 상태 일 때)**
 ```bash
 HTTP/1.1 302 Found
 Set-Cookie: accessToken=${accessToken}; Path=/;
-Location: http://127.0.0.1:3000/auth/${registration}
+Location: http://127.0.0.1:4000/auth/${registration}
 ```
 
 **응답 : 실패 (OAuth 실패)**

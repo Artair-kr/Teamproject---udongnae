@@ -540,7 +540,7 @@ HTTP/1.1 500 Internal Server Error
 ###### Example
 
 ```bash
-curl -v GET http://127.0.0.1:4000/api/v1/auth/sns/kakao
+curl -v GET "http://127.0.0.1:4000/api/v1/auth/sns/kakao"
 ```
 
 ##### Response

@@ -234,8 +234,8 @@ HTTP/1.1 400 Bad Request
 HTTP/1.1 400 Bad Request
 
 {
-  "code": "EU",
-  "message": "Exist User."
+  "code": "EN",
+  "message": "Exist NickName."
 }
 ```
 
@@ -248,15 +248,16 @@ HTTP/1.1 500 Internal Server Error
   "message": "Database Error."
 }
 ```
+***
 
-#### - 이메일 중복 확인  
+### - 이메일 인증코드 전송, 중복 확인 
   
+클라이언트로부터 이메일을 입력받아 해당하는 이메일이 이미 사용중인 이메일인지 확인하고 사용하고 있지 않은 이메일이라면 4자리의 인증코드를 해당 이메일로 전송합니다. 이메일 전송이 성공적으로 종료되었으면 성공처리를 합니다. 만약 중복된 이메일이거나 이메일 전송에 실패했으면 실패처리를 합니다. 데이터베이스 오류가 발생할 수 있습니다.  
+
 ##### 설명
 
-클라이언트는 사용할 이메일을 포함하여 요청하고 중복되지 않는 이메일이라면 성공 응답을 받습니다. 만약 사용중인 이메일이라면 이메일 중복에 해당하는 응답을 받습니다. 서버 에러, 데이터베이스 에러가 발생할 수 있습니다.  
-
 - method : **POST**  
-- URL : **/email-check**  
+- URL : **/email-auth**  
 
 ##### Request
 
@@ -264,13 +265,188 @@ HTTP/1.1 500 Internal Server Error
 
 | name | type | description | required |
 |---|:---:|:---:|:---:|
-| userEmail | String | 중복확인을 수행할 사용자 이메일 | O |
+| userEmail | String | 인증번호를 전송할 사용자 이메일 | O |
 
 ###### Example
 
 ```bash
-curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/email-check" \
+curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/email-auth" \
  -d "userEmail=qwer1234@gmail.com"
+```
+
+##### Response
+
+###### Response Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| code | String | 응답 결과 코드 | O |
+| message | String | 응답 결과 코드에 대한 설명 | O |
+
+###### Example
+
+**응답 성공**
+```bash
+HTTP/1.1 200 OK
+
+{
+  "code": "SU",
+  "message": "Success."
+}
+```
+
+**응답 : 실패 (데이터 유효성 검사 실패)**
+```bash
+HTTP/1.1 400 Bad Request
+
+{
+  "code": "VF",
+  "message": "Validation Fail."
+}
+```
+
+**응답 : 실패 (중복된 이메일)**
+```bash
+HTTP/1.1 400 Bad Request
+
+{
+  "code": "DE",
+  "message": "Duplicatied Email."
+}
+```
+
+**응답 : 실패 (이메일 전송 실패)**
+```bash
+HTTP/1.1 500 Internal Server Error
+
+{
+  "code": "MF",
+  "message": "Mail send Failed."
+}
+```
+
+
+**응답 : 실패 (데이터베이스 에러)**
+```bash
+HTTP/1.1 500 Internal Server Error
+
+{
+  "code": "DBE",
+  "message": "Database Error."
+}
+```
+
+***
+### 이메일 인증 확인
+
+- method : **POST**  
+- URL : **/email-auth-check**  
+
+##### Request
+
+###### Request Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| userEmail | String | 인증 번호를 확인할 사용자 이메일 | O |
+| authNumber | String | 인증 확인할 인증 번호 | O |
+
+###### Example
+
+```bash
+curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/email-auth-check" \
+ -d "userEmail=qwer1234@gmail.com" \
+    "authNumber=1234"
+```
+
+##### Response
+
+###### Response Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| code | String | 응답 결과 코드 | O |
+| message | String | 응답 결과 코드에 대한 설명 | O |
+
+###### Example
+
+**응답 성공**
+```bash
+HTTP/1.1 200 OK
+
+{
+  "code": "SU",
+  "message": "Success."
+}
+```
+
+**응답 : 실패 (이메일 인증 실패)**
+```bash
+HTTP/1.1 401 Unauthorized
+
+{
+  "code": "AF",
+  "message": "Authentication Failed."
+}
+```
+
+
+**응답 : 실패 (데이터베이스 에러)**
+```bash
+HTTP/1.1 500 Internal Server Error
+
+{
+  "code": "DBE",
+  "message": "Database Error."
+}
+```
+
+***
+
+#### - 회원가입  
+  
+##### 설명
+
+클라이언트는 사용자 이름, 닉네임, 성별, 사용자 아이디, 사용자 비밀번호, 사용자 이메일, 주소, 상세주소,  가입경로를 포함하여 요청하고 회원가입이 성공적으로 이루어지면 성공에 해당하는 응답을 받습니다. 만약 존재하는 아이디일 경우 중복된 아이디에 대한 응답을 받습니다. 서버 에러, 데이터베이스 에러가 발생할 수 있습니다.  
+
+- method : **POST**  
+- URL : **/sign-up**  
+
+##### Request
+
+###### Request Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| userId | String | 사용자 아이디 (영문과 숫자로만 이루어진 6자 이상 20자 이하 문자열) | O |
+| userNickname | String | 사용자 닉네임 | O |
+| userPassword | String | 사용자 비밀번호 (영문 숫자 조합으로 이루어진 8자 이상 13자 이하 문자열) | O |
+| userEmail| String | 사용자 이메일(특수문자는 '@', '.', '-', '_' 만 사용) | O |
+| authNumber | String | 인증 확인할 인증 번호 | O |
+| name | String | 사용자 이름 (한글로만 이루어진 2자 이상 5자 이하 문자열) | O |
+| gender | String | 사용자 성별 (남, 여) | O |
+| address | String | 사용자 주소 | O |
+| detailAddress | String | 사용자 상세 주소 | X |
+| joinType | String | 가입 경로 (NORMAL: 일반, KAKAO: 카카오, NAVER: 네이버) | O |
+| snsId | String | sns 아이디 | X |
+| profileImage | String | 사용자 프로필 | X |
+| userLevel | String | 사용자 등급 | O |
+
+###### Example
+
+```bash
+curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/sign-up" \
+ -d "userId=qwer1234" \
+    "userPassword=qwer1234" \
+    "userEmail=qwer1234@gmail.com" \
+    "authNumber=1234""\
+    "userNickname=맛집" \
+    "gender=남" \
+    "name=홍길동" \
+    "address=부산광역시 부산진구 ..." \
+    "detailAddress=402호" \
+    "userLevel=0레벨" \
+    "joinType=NORMAL"
 ```
 
 ##### Response
@@ -314,245 +490,22 @@ HTTP/1.1 400 Bad Request
 }
 ```
 
-**응답 : 실패 (데이터베이스 에러)**
-```bash
-HTTP/1.1 500 Internal Server Error
-
-{
-  "code": "DBE",
-  "message": "Database Error."
-}
-```
-
-***
-### 이메일 인증번호(인증코드) 생성 
-회원가입을 진행하고 있는 사용자는 아직 인증된 사용자가 아니다.
-이때 사용자의 인증 토큰 만료 여부(expired) 는 false 로 인증된 사용자가 아니다.
-사용자가 클라이언트에 인증요청을 보낸다. (post)
-클라이언트는 무작위 난수로 인증코드를 생성하고, 유효기간을 작성한다. 
-
-- method : **POST**  
-- URL : **/email**  
-
-##### Request
-
-###### Request Body
-
-| name | type | description | required |
-|---|:---:|:---:|:---:|
-| userEmail | String | 사용자의 이메일 | O |
-| emailToken | String | Bearer 인증 방식에 사용될 JWT (email) | O |
-| expirationTime | Integer | accessToken의 만료 기간 (초단위?) | O |
-| expired | Boolean | accessToken의 만료 여부 | O |
-
-###### Example
-
-```bash
-curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/email" \
- -d "userEmail=qwer1234@gmail.com" \
-```
-
-##### Response
-
-###### Response Body
-
-| name | type | description | required |
-|---|:---:|:---:|:---:|
-| code | String | 응답 결과 코드 | O |
-| message | String | 응답 결과 코드에 대한 설명 | O |
-
-###### Example
-
-**응답 성공**
-```bash
-HTTP/1.1 200 OK
-
-{
-  "code": "SU",
-  "message": "Success."
-}
-```
-
-**응답 : 실패 (중복된 이메일 주소)**
+**응답 : 실패 (중복된 닉네임)**
 ```bash
 HTTP/1.1 400 Bad Request
 
 {
-  "code": "EU",
-  "message": "Exist User."
+  "code": "EN",
+  "message": "Exist NickName."
 }
 ```
 
-
-**응답 : 실패 (데이터베이스 에러)**
-```bash
-HTTP/1.1 500 Internal Server Error
-
-{
-  "code": "DBE",
-  "message": "Database Error."
-}
-```
-
-***
-
-### 이메일 인증번호(인증코드) 인가
-회원가입을 원하는 사용자가 입력한 이메일로 인증코드를 보낸다.(get)
-사용자가 입력한 인증코드와 클라이언트측에서 저장한 인증코드가 같은지 확인한다.
-인증코드가 일치한다면, 사용자의 인증을 허용한다.
-이때 사용자의 인증 토큰 만료 여부(expired) 는 true 로 인증된 사용자로 바뀐다.
-
-- method : **GET**  
-- URL : **/email** 
-
-##### Request
-
-###### Request Body
-
-| name | type | description | required |
-|---|:---:|:---:|:---:|
-| userEmail | String | 사용자의 이메일 | O |
-| emailToken | String | Bearer 인증 방식에 사용될 JWT (email) | O |
-| expirationTime | Integer | accessToken의 만료 기간 (초단위?) | O |
-| expired | Boolean | accessToken의 만료 여부 | O |
-
-###### Example
-
-```bash
-curl -v -X GET "http://127.0.0.1:4000/api/v1/auth/email" \
- -d "userEmail=qwer1234@gmail.com" \
-    "emailToken=qwer1234"
-```
-
-##### Response
-
-###### Response Body
-
-| name | type | description | required |
-|---|:---:|:---:|:---:|
-| code | String | 응답 결과 코드 | O |
-| message | String | 응답 결과 코드에 대한 설명 | O |
-
-###### Example
-
-**응답 성공**
-```bash
-HTTP/1.1 200 OK
-
-{
-  "code": "SU",
-  "message": "Success."
-}
-```
-
-
-**응답 : 실패 (데이터 유효성 검사 실패)**
+**응답 : 실패 (중복된 이메일)**
 ```bash
 HTTP/1.1 400 Bad Request
-
 {
-  "code": "VF",
-  "message": "Validation Fail."
-}
-```
-
-
-**응답 : 실패 (데이터베이스 에러)**
-```bash
-HTTP/1.1 500 Internal Server Error
-
-{
-  "code": "DBE",
-  "message": "Database Error."
-}
-```
-
-***
-
-#### - 회원가입  
-  
-##### 설명
-
-클라이언트는 사용자 이름, 닉네임, 성별, 사용자 아이디, 사용자 비밀번호, 사용자 이메일, 주소, 상세주소,  가입경로를 포함하여 요청하고 회원가입이 성공적으로 이루어지면 성공에 해당하는 응답을 받습니다. 만약 존재하는 아이디일 경우 중복된 아이디에 대한 응답을 받습니다. 서버 에러, 데이터베이스 에러가 발생할 수 있습니다.  
-
-- method : **POST**  
-- URL : **/sign-up**  
-
-##### Request
-
-###### Request Body
-
-| name | type | description | required |
-|---|:---:|:---:|:---:|
-| userId | String | 사용자 아이디 (영문과 숫자로만 이루어진 6자 이상 20자 이하 문자열) | O |
-| userNickname | String | 사용자 닉네임 | O |
-| userPassword | String | 사용자 비밀번호 (영문 숫자 조합으로 이루어진 8자 이상 13자 이하 문자열) | O |
-| userEmail| String | 사용자 이메일(특수문자는 '@', '.', '-', '_' 만 사용) | O |
-| name | String | 사용자 이름 (한글로만 이루어진 2자 이상 5자 이하 문자열) | O |
-| gender | String | 사용자 성별 (남, 여) | O |
-| address | String | 사용자 주소 | O |
-| detailAddress | String | 사용자 상세 주소 | X |
-| joinType | String | 가입 경로 (NORMAL: 일반, KAKAO: 카카오, NAVER: 네이버) | O |
-| snsId | String | sns 아이디 | X |
-| profileImage | String | 사용자 프로필 | X |
-| userLevel | String | 사용자 등급 | O |
-| emailToken | String | Bearer 인증 방식에 사용될 JWT (email) | O |
-
-###### Example
-
-```bash
-curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/sign-up" \
- -d "userId=qwer1234" \
-    "userPassword=qwer1234" \
-    "userEmail=qwer1234@gmail.com" \
-    "emailToken=qwer1234""\
-    "userNickname=맛집" \
-    "gender=남" \
-    "name=홍길동" \
-    "address=부산광역시 부산진구 ..." \
-    "detailAddress=402호" \
-    "userLevel=0레벨" \
-    "joinType=NORMAL"
-```
-
-##### Response
-
-###### Response Body
-
-| name | type | description | required |
-|---|:---:|:---:|:---:|
-| code | String | 응답 결과 코드 | O |
-| message | String | 응답 결과 코드에 대한 설명 | O |
-
-###### Example
-
-**응답 성공**
-```bash
-HTTP/1.1 200 OK
-
-{
-  "code": "SU",
-  "message": "Success."
-}
-```
-
-**응답 : 실패 (데이터 유효성 검사 실패)**
-```bash
-HTTP/1.1 400 Bad Request
-
-{
-  "code": "VF",
-  "message": "Validation Fail."
-}
-```
-
-**응답 : 실패 (중복된 아이디 또는 닉네임)**
-```bash
-HTTP/1.1 400 Bad Request
-
-{
-  "code": "EU",
-  "message": "Exist User."
+  "code": "DE",
+  "message": "Duplicatied Email."
 }
 ```
 

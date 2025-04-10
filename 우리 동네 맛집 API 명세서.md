@@ -572,6 +572,16 @@ HTTP/1.1 500 Internal Server Error
 - method : **POST**  
 - URL : **id-search**  
 
+##### Request
+
+###### Request Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| userEmail| String | 사용자 이메일(특수문자는 '@', '.', '-', '_' 만 사용) | O |
+| name | String | 사용자 이름 (한글로만 이루어진 2자 이상 5자 이하 문자열) | O |
+| authNumber | String | 인증번호 4글자(영어 대문자, 숫자 랜덤값) | O |
+
 ###### Example
 
 ```bash
@@ -634,6 +644,16 @@ HTTP/1.1 500 Internal Server Error
 
 - method : **POST**  
 - URL : **password-search**
+
+##### Request
+
+###### Request Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| userId | String | 사용자 아이디 (영문과 숫자로만 이루어진 6자 이상 20자 이하 문자열) | O |
+| userEmail| String | 사용자 이메일(특수문자는 '@', '.', '-', '_' 만 사용) | O |
+| authNumber | String | 인증번호 4글자(영어 대문자, 숫자 랜덤값) | O |
 
 ###### Example
 

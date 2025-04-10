@@ -561,6 +561,134 @@ HTTP/1.1 500 Internal Server Error
 }
 ```
 ***
+#### - 아이디 찾기
+  
+##### 설명
+
+클라이언트는 사용자에게 사용자의 이름, 이메일 주소를 입력을 요청합니다.
+사용자의 이름과 이메일 주소를 데이테베이스에 저장된 사용자 이름, 이메일 주소와 비교하고, 같은 사용자에 이름과 이메일주소가 존재한다면 이메일 주소로 인증번호를 보냅니다.
+인증번호를 입력하여 인증번호가 맞다면 아이디를 알려줍니다.
+
+- method : **POST**  
+- URL : **id-search**  
+
+###### Example
+
+```bash
+curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/id-search" \
+ -d "name=홍길동" \
+    "userEmail=qwer1234@gmail.com" \
+    "authNumber=1234"
+```
+
+##### Response
+
+###### Response Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| code | String | 응답 결과 코드 | O |
+| message | String | 응답 결과 코드에 대한 설명 | O |
+
+###### Example
+
+**응답 성공**
+```bash
+HTTP/1.1 200 OK
+
+{
+  "code": "SU",
+  "message": "Success."
+}
+```
+
+**응답 : 실패 (이메일 인증 실패)**
+```bash
+HTTP/1.1 401 Unauthorized
+
+{
+  "code": "AF",
+  "message": "Authentication Failed."
+}
+```
+
+
+**응답 : 실패 (데이터베이스 에러)**
+```bash
+HTTP/1.1 500 Internal Server Error
+
+{
+  "code": "DBE",
+  "message": "Database Error."
+}
+```
+***
+
+#### - 비밀번호 찾기
+  
+##### 설명
+
+클라이언트는 사용자에게 사용자의 아이디, 이메일 주소를 입력을 요청합니다.
+사용자의 이름과 이메일 주소를 데이테베이스에 저장된 사용자 아이디, 이메일 주소와 비교하고, 같은 사용자에 아이디와 이메일 주소가 존재한다면 이메일 주소로 인증번호를 보냅니다.
+인증번호를 입력하여 인증번호가 맞다면 임시비밀번호를 사용자의 이메일로 전송합니다.
+
+- method : **POST**  
+- URL : **password-search**
+
+###### Example
+
+```bash
+curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/password-search" \
+ -d "userId=qwer1234" \
+    "userEmail=qwer1234@gmail.com" \
+    "authNumber=1234"
+```
+
+##### Response
+
+###### Response Body
+
+| name | type | description | required |
+|---|:---:|:---:|:---:|
+| code | String | 응답 결과 코드 | O |
+| message | String | 응답 결과 코드에 대한 설명 | O |
+
+###### Example
+
+**응답 성공**
+```bash
+HTTP/1.1 200 OK
+
+{
+  "code": "SU",
+  "message": "Success."
+}
+```
+
+**응답 : 실패 (이메일 인증 실패)**
+```bash
+HTTP/1.1 401 Unauthorized
+
+{
+  "code": "AF",
+  "message": "Authentication Failed."
+}
+```
+
+
+**응답 : 실패 (데이터베이스 에러)**
+```bash
+HTTP/1.1 500 Internal Server Error
+
+{
+  "code": "DBE",
+  "message": "Database Error."
+}
+```
+
+
+***
+
 
 <h2 style='background-color: rgba(55, 55, 55, 0.2); text-align: center'>Board 모듈</h2>
 

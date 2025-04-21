@@ -608,7 +608,7 @@ HTTP/1.1 200 OK
 
 {
   "code": "SU",
-  "message": "Success."
+  "message": "qwer1234"
 }
 ```
 

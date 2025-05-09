@@ -562,7 +562,7 @@ HTTP/1.1 500 Internal Server Error
 ```
 ***
 
-#### - SNS 추가정보 입력 (회원가입)
+#### - SNS 추가정보 입력 (sns 회원가입)
   
 ##### 설명
 
@@ -577,7 +577,7 @@ HTTP/1.1 500 Internal Server Error
 
 | name | type | description | required |
 |---|:---:|:---:|:---:|
-| userId | String | 사용자 아이디 (영문과 숫자로만 이루어진 6자 이상 20자 이하 문자열) | O |
+| userId | String | 사용자 아이디 (joinType + _ + snsId 자동 작성 )  | O |
 | userNickname | String | 사용자 닉네임 | O |
 | userEmail| String | 사용자 이메일(특수문자는 '@', '.', '-', '_' 만 사용) | O |
 | name | String | 사용자 이름 (한글로만 이루어진 2자 이상 5자 이하 문자열) | O |

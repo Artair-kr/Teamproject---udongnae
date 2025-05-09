@@ -566,7 +566,7 @@ HTTP/1.1 500 Internal Server Error
   
 ##### 설명
 
-클라이언트는 사용자 이름, 닉네임, 성별, 사용자 이메일, 주소, 상세주소, 가입경로를 포함하여 요청하고 회원가입이 성공적으로 이루어지면 성공에 해당하는 응답을 받습니다. 아이디는 joinType과 snsId을 조합하여 자동으로 작성됩니다. 입력한 정보는 user 테이블과 snsUser 테이블에 각각 필요한 정보를 저장합니다. 회원가입 성공시 accessToken 인증에 사용될 token과 해당 token의 만료 기간을 응답 데이터로 전달받습니다. 서버 에러, 데이터베이스 에러가 발생할 수 있습니다.  
+클라이언트는 사용자 이름, 닉네임, 성별, 사용자 이메일, 주소, 상세주소, 가입경로를 포함하여 요청하고 회원가입이 성공적으로 이루어지면 성공에 해당하는 응답을 받습니다. 아이디는 joinType과 snsId을 조합하여 자동으로 작성됩니다. 비밀번호를 작성하지 않습니다. 입력한 정보는 user 테이블과 snsUser 테이블에 각각 필요한 정보를 저장합니다. 회원가입 성공시 accessToken 인증에 사용될 token과 해당 token의 만료 기간을 응답 데이터로 전달받습니다. 서버 에러, 데이터베이스 에러가 발생할 수 있습니다.  
 
 - method : **POST**  
 - URL : **/sns-sign-up**  
@@ -593,7 +593,7 @@ HTTP/1.1 500 Internal Server Error
 ###### Example
 
 ```bash
-curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/sign-up" \
+curl -v -X POST "http://127.0.0.1:4000/api/v1/auth/sns-sign-up" \
  -d "userId=KAKAO_1234567890" \
  -d "userEmail=qwer1234@gmail.com" \
  -d "authNumber=qr14"\
@@ -667,6 +667,7 @@ HTTP/1.1 500 Internal Server Error
 클라이언트는 사용자에게 사용자의 이름, 이메일 주소를 입력을 요청합니다.
 사용자의 이름과 이메일 주소를 데이테베이스에 저장된 사용자 이름, 이메일 주소와 비교하고, 같은 사용자에 이름과 이메일주소가 존재한다면 이메일 주소로 인증번호를 보냅니다.
 인증번호를 입력하여 인증번호가 맞다면 아이디를 알려줍니다.
+sns사용자의 아이디의 경우 snsId가 존재하기에 찾을수 없게 작성하였습니다.
 
 - method : **POST**  
 - URL : **id-search**  
@@ -707,7 +708,28 @@ HTTP/1.1 200 OK
 
 {
   "code": "SU",
-  "message": "qwer1234"
+  "message": "Success.",
+  "userId": "qwer1234"
+}
+```
+
+**응답 성공 (sns 사용자는 이용 불가)**
+```bash
+HTTP/1.1 200 OK
+
+{
+  "code": "SNF",
+  "message": "Sns Not Found"
+}
+```
+
+**응답 성공 (존재하지 않는 사용자)**
+```bash
+HTTP/1.1 200 OK
+
+{
+  "code": "NEU",
+  "message": "Not Exist User"
 }
 ```
 
